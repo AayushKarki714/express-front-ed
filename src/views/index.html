@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Image</title>
+  </head>
+  <body>
+    <form>
+      <input id="myFiles" type="file" accept="image/*" />
+      <button type="submit">Submit</button>
+    </form>
+    <script>
+      const form = document.querySelector("form");
+      const sendFiles = async (event) => {
+        event.preventDefault();
+        const myFiles = document.getElementById("myFiles").files;
+        const formData = new FormData();
+        Object.keys(myFiles).forEach((key) => {
+          formData.append(myFiles.item(key).name, myFiles.item(key));
+        });
+        const response = await fetch("http://localhost:8000/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const json = await response.json();
+        const img = document.createElement("img");
+        img.src = `http://localhost:8000/${json.message}`;
+        form.appendChild(img);
+        console.log(json);
+      };
+      form.addEventListener("submit", sendFiles);
+    </script>
+  </body>
+</html>
